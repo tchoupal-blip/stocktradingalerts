@@ -18,6 +18,26 @@ VOLUME_SPIKE_MULTIPLIER = 2.0
 BB_PERIOD = 20
 BB_STD_DEV = 2
 
+# Stochastic Oscillator settings
+STOCH_PERIOD = 14
+STOCH_SMOOTH = 3
+STOCH_OVERSOLD = 20
+STOCH_OVERBOUGHT = 80
+
+# ADX / Directional Index settings
+ADX_PERIOD = 14
+ADX_THRESHOLD = 25  # Minimum ADX for a strong trend
+
+# CCI settings
+CCI_PERIOD = 20
+CCI_OVERSOLD = -100
+CCI_OVERBOUGHT = 100
+
+# Williams %R settings
+WILLIAMS_PERIOD = 14
+WILLIAMS_OVERSOLD = -80
+WILLIAMS_OVERBOUGHT = -20
+
 # Moving average crossovers
 SMA_SHORT = 50
 SMA_LONG = 200

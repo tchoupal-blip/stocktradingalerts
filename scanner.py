@@ -65,8 +65,8 @@ def scan(min_signals: int, days: int) -> None:
     tickers = fetch_sp500_tickers()
     data = fetch_price_data(tickers, days)
 
-    buy_alerts: list[tuple[str, list[indicators.Signal]]] = []
-    sell_alerts: list[tuple[str, list[indicators.Signal]]] = []
+    buy_alerts: list[tuple[str, list[indicators.Signal], float]] = []
+    sell_alerts: list[tuple[str, list[indicators.Signal], float]] = []
 
     total_scanned = len(data)
     for ticker, df in data.items():
@@ -76,13 +76,15 @@ def scan(min_signals: int, days: int) -> None:
         buy_sigs = [s for s in signals if s.direction == "buy"]
         sell_sigs = [s for s in signals if s.direction == "sell"]
         if len(buy_sigs) >= min_signals:
-            buy_alerts.append((ticker, buy_sigs))
+            score = indicators.total_strength(buy_sigs)
+            buy_alerts.append((ticker, buy_sigs, score))
         if len(sell_sigs) >= min_signals:
-            sell_alerts.append((ticker, sell_sigs))
+            score = indicators.total_strength(sell_sigs)
+            sell_alerts.append((ticker, sell_sigs, score))
 
-    # Sort alphabetically
-    buy_alerts.sort(key=lambda x: x[0])
-    sell_alerts.sort(key=lambda x: x[0])
+    # Sort by strength score descending (strongest first)
+    buy_alerts.sort(key=lambda x: x[2], reverse=True)
+    sell_alerts.sort(key=lambda x: x[2], reverse=True)
 
     today = datetime.date.today().isoformat()
     print()
@@ -92,17 +94,17 @@ def scan(min_signals: int, days: int) -> None:
 
     if buy_alerts:
         print(f"\n{Fore.GREEN}BUY SIGNALS:{Style.RESET_ALL}")
-        for ticker, sigs in buy_alerts:
+        for ticker, sigs, score in buy_alerts:
             details = ", ".join(s.detail for s in sigs)
-            print(f"  {Fore.GREEN}{ticker:<6}{Style.RESET_ALL}| {details}")
+            print(f"  {Fore.GREEN}{ticker:<6}{Style.RESET_ALL}| {Fore.YELLOW}[{score:4.1f}/10]{Style.RESET_ALL} {details}")
     else:
         print(f"\n{Fore.GREEN}BUY SIGNALS:{Style.RESET_ALL}  (none)")
 
     if sell_alerts:
         print(f"\n{Fore.RED}SELL SIGNALS:{Style.RESET_ALL}")
-        for ticker, sigs in sell_alerts:
+        for ticker, sigs, score in sell_alerts:
             details = ", ".join(s.detail for s in sigs)
-            print(f"  {Fore.RED}{ticker:<6}{Style.RESET_ALL}| {details}")
+            print(f"  {Fore.RED}{ticker:<6}{Style.RESET_ALL}| {Fore.YELLOW}[{score:4.1f}/10]{Style.RESET_ALL} {details}")
     else:
         print(f"\n{Fore.RED}SELL SIGNALS:{Style.RESET_ALL}  (none)")
 
