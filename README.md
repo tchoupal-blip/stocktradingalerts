@@ -31,12 +31,29 @@ pip install -r requirements.txt
 
 ## Usage
 
+### CLI
+
 ```bash
 python run.py                   # Default: 2+ signals, 365-day lookback
 python run.py --min-signals 5   # Recommended: high-conviction alerts only
 python run.py --min-signals 1   # Lower threshold for more alerts
 python run.py --days 730        # 2-year lookback period
 ```
+
+### Web Dashboard
+
+```bash
+streamlit run dashboard.py
+```
+
+Opens an interactive dashboard at `http://localhost:8501` with:
+
+- **Sidebar controls** — adjust min signals (1–10) and lookback days (30–730)
+- **Summary metrics** — total stocks scanned, buy alerts, and sell alerts
+- **Buy/Sell tabs** — color-coded tables ranked by signal strength
+- **Stock details** — expandable Plotly candlestick charts and per-indicator breakdowns
+
+Scan results are cached for 5 minutes to avoid redundant data fetches.
 
 ### Recommended `--min-signals` values
 
